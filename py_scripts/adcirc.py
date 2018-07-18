@@ -130,12 +130,11 @@ class adcirc:
             if table[xx[i]][0] == 'NaN':
                 i+=1
             else:
-                print(xx[i])
-                if xx[i]=='surface_dirctional':
-                    print('true')
-                    table[xx[i].split('_')[0]+'nodes'],table['e'],table['ese'],table['se'],table['s'], table['sw'], table['wsw'], table['w'], table['wnw'],table['nw'], table['n'], table['ne'], table['ene'] = table[xx[i]].str.split(' ', 0).str
+                if 'surface_directional' in xx[i]:
+                    table[xx[i].split('_')[0]+'dir_nodes'],table['e'],table['ese'],table['se'],table['s'], table['sw'], table['wsw'], table['w'], table['wnw'],table['nw'], table['n'], table['ne'], table['ene'] = table[xx[i]].str.split(' ', 0).str
+                    table = table.drop(xx[i],1)
                 else:
-                    table[xx[i].split('_')[0]+'nodes'], table[xx[i].split('_')[0]+'data'] = table[xx[i]].str.split(' ', 0).str
-
+                    table[xx[i].split('_')[0]+'nodes'], table[xx[i].split('_')[0]+'data'] = table[xx[i]].str.split(' ', 1).str
+                    table = table.drop(xx[i],1)
         return table
         
