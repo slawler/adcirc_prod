@@ -9,16 +9,27 @@ conda install -c conda-forge jupyter_core
 conda install -c conda-forge jupyter_contrib_nbextensions
 conda install -c conda-forge jupyter_nbextensions_configurator
 conda install -c conda-forge jupyter_dashboards
+git clone https://github.com/gwdetchar/gwdetchar.git
+cd wave_utils/
+python setup.py install
+cd ..
+git clone https://github.com/openearth/oceanwaves-python.git
+cd oceanwaves-python
+python setup.py install
+cd ..
 #conda install -c conda-forge plotly
 conda install -c plotly plotly
 conda install -c anaconda basemap
 conda install -c anaconda netcdf4
 conda install -c anaconda ipython
+conda install -c conda-forge jupyter_kernel_gateway
 export PATH=$HOME:$PATH
 jupyter labextension install @jupyter-widgets/jupyterlab-manager
 jupyter labextension install @jupyterlab/plotly-extension
 jupyter labextension install jupyter-leaflet
 jupyter lab build
+conda clean -t
+conda clean -p
 #
 #
 # problems with libraries in conda
