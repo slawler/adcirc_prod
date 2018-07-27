@@ -2,16 +2,28 @@
 # Author: Tyler Miesse
 
 '''
-    ADCIRC Functions
-    attributes_fort13
-    read_fort13
+    ADCIRC Functions:
+        attributes
+        read_fort13
+        read_fort14
+        seperate_13
+        initnc4
+        add_attribute2nc4
+        attr_plot
+        plot_surf_dir
 '''
-
 import pandas as pd
 import numpy as np
 from importlib import reload
 import adcirc_input_lib ; reload(adcirc_input_lib)
 from adcirc_input_lib import *
+import netCDF4 as nc4
+from datetime import datetime
+import matplotlib.cbook
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+from mpl_toolkits.basemap import Basemap
+from matplotlib.patches import FancyArrowPatch
 
 class adcirc:
     
@@ -45,9 +57,9 @@ class adcirc:
 
         
     def read_fort13(self, attribute):
-        a = dt.now()
-        print("\n Started finding nodes in attributes at \n") 
-        print(a)
+        #a = dt.now()
+        #print("\n Started finding nodes in attributes at \n") 
+        #print(a)
         x = 0
         table_v2 = pd.DataFrame()
         with open(self.fp, 'r') as f:
@@ -93,11 +105,11 @@ class adcirc:
                 table_v3 = pd.DataFrame(data)
                 table_v3.columns=[attribute['Parameter'][x].split('_')[0]+'_'+attribute['Parameter'][x].split('_')[1]]
                 table_v2 = pd.concat([table_v2,table_v3],axis=1,sort=False)
-        b = dt.now()
-        c = b-a
-        print("===========END========== \n")
-        print("Processing Time : ")
-        print(c)  
+        #b = dt.now()
+        #c = b-a
+        #print("===========END========== \n")
+        #print("Processing Time : ")
+        #print(c)  
         return table_v2 
         
         
@@ -131,10 +143,228 @@ class adcirc:
                 i+=1
             else:
                 if 'surface_directional' in xx[i]:
-                    table[xx[i].split('_')[0]+'dir_nodes'],table['e'],table['ese'],table['se'],table['s'], table['sw'], table['wsw'], table['w'], table['wnw'],table['nw'], table['n'], table['ne'], table['ene'] = table[xx[i]].str.split(' ', 0).str
+                    table[xx[i].split('_')[0]+'dir_nodes'],table['e'],table['ene'],table['ne'],table['n'], table['nw'], table['wnw'], table['w'], table['wsw'],table['sw'], table['s'], table['se'], table['ese'] = table[xx[i]].str.split(' ', 0).str
                     table = table.drop(xx[i],1)
                 else:
                     table[xx[i].split('_')[0]+'nodes'], table[xx[i].split('_')[0]+'data'] = table[xx[i]].str.split(' ', 1).str
                     table = table.drop(xx[i],1)
         return table
+    
+       
+    def initnc4(netcdf_path, fort14, lon='lon',lat='lat'):
+        f = nc4.Dataset(os.path.join(netcdf_path,'input_fort.nc'),'w',format='NETCDF4')
+        temp = f.createGroup('fort14')
+        variable1 = ['lat','lon','value']
+        header1   = ['Latitude','Longitude','Elevation']   
+        for y in range(0,len(variable1)):
+            temp.createDimension(variable1[y],len(fort14[variable1[y]]))
+            variab1 = temp.createVariable(header1[y],'f4',variable1[y],zlib=True)
+            variab1[:]= fort14[variable1[y]].values
+        temp.createDimension('nodes', len(fort14['node_id']))
+        temp.createDimension('time', None)
+        nodes = temp.createVariable('nodes','i4','nodes', zlib=True)
+        time = temp.createVariable('Time', 'i4', 'time', zlib=True)
+        nodes[:]     = fort14['node_id'].values
+        time.units      = 'days since July 24'
+        nodes.units   = 'none'
+        today = datetime.today()
+        time_n= today.toordinal()
+        time[0]= time_n
+        f.history     = 'Created ' + today.strftime('%d/%m/%y')
+        f.close()
+        return
+    
+    def add_attribute2nc4(netcdf_path, table, attr, lon='lon',lat='lat',surf='0'):
+        head = list(table)
+        variable = ['lat','lon','value','e','ene','ne','n','nw',
+                    'wnw','w','wsw','sw','s','se','ese']
+        header   = ['Latitude','Longitude','Elevation','E','ENE',
+                    'NE','N','NW','WNW','W','WSW','SW','S','SE','ESE']
+        variable1 = ['lat','lon','value',head[-1]]
+        header1   = ['Latitude','Longitude','Elevation','data']
+        f=nc4.Dataset(os.path.join(netcdf_path,'input_fort.nc'),'r+')
+        for i in range(0,len(attr['Parameter'])):
+            if int(surf) !=0:
+                temp = f.createGroup('surface_directional_effective_roughness_length')
+                for x in range(0,len(variable)):
+                    temp.createDimension(variable[x],len(table[variable[x]]))
+                    variab = temp.createVariable(header[x],'f4',variable[x],zlib=True)
+                    variab[:]= table[variable[x]].values
+                temp.createDimension('nodes',len(table['node_id']))
+                nodes= temp.createVariable('nodes','S1','nodes',zlib=True)
+                nodes[:]      = table['node_id'].values
+                f.close()
+                break
+            else:
+                for ii in range(0,len(head)):
+                    if attr['Parameter'][i].split('_')[0]==head[ii].split('nodes')[0]:
+                        if attr['Parameter'][i]=='surface_directional_effective_roughness_length' and head[ii]!='surfacedir_nodes':
+                            i+=1
+
+                        else:                         
+                            temp = f.createGroup(attr['Parameter'][i])
+                            for y in range(0,len(variable1)):
+                                temp.createDimension(variable1[y],len(table[variable1[y]]))
+                                variab1 = temp.createVariable(header1[y],'f4',variable1[y],zlib=True)
+                                variab1[:]= table[variable1[y]].values    
+                            temp.createDimension('nodes',len(table['node_id']))
+                            nodes= temp.createVariable('nodes','S1','nodes',zlib=True)
+                            nodes[:]      = table['node_id'].values
+                            f.close()
+                            break
+        return
+  
+        
+    def attr_plot(grp,title,ax,lat1,lat2,lon1,lon2,data='data',pixels='600'):
+        x = grp.variables['Longitude'][:]
+        y = grp.variables['Latitude'][:]
+        #z = grp.variables['Elevation'][:]
+        data = grp.variables[data][:]
+        m = Basemap(projection='cyl',llcrnrlat=lat1,urcrnrlat=lat2,llcrnrlon=lon1,urcrnrlon=lon2,resolution='h', epsg = 4269)
+        m.drawcoastlines(color='k')
+        m.arcgisimage(service='World_Street_Map', xpixels=int(pixels), verbose= False)
+        plt.title(title+'\n')
+        cmap = matplotlib.cm.get_cmap('viridis')  
+        normalize = matplotlib.colors.Normalize(vmin=min(data), vmax=max(data))
+        colors = [cmap(normalize(value)) for value in data]
+        ax.scatter(x,y,marker = '.', color=colors, zorder=.25)
+        cax, _ = matplotlib.colorbar.make_axes(ax)
+        cbar = matplotlib.colorbar.ColorbarBase(cax, cmap=cmap, norm=normalize)
+        
+        return plt.show()
+        
+   
+    def plot_surf_dir(grp,lat1,lat2,lon1,lon2):
+        x,y =0.225,0.225
+        xx = grp.variables['Longitude'][:]
+        yy = grp.variables['Latitude'][:]
+        l1 = [(0,.75),(1,0.25)]
+        l2 = [(.25,1),]
+        (lx1,ly1) = zip(*l1)
+        fig_title='Surface Directional Roughness Length'
+        plt.text(.5, 1.40, fig_title,horizontalalignment='center',fontsize=100)
+
+        ax1 = plt.subplot()
+        ax1.grid(False)
+        ax1.axis('off')
+        # Arrows pointing in the 12 directions
+        ax1.add_patch(FancyArrowPatch([0.5,0.75],[0.5,0.95],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.6,0.75],[0.7,0.925],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.625,0.7],[0.75,0.75],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.65,0.5],[0.8,0.5],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.625,0.3],[0.75,0.25],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))        
+        ax1.add_patch(FancyArrowPatch([0.6,0.25],[0.7,0.085],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.5,0.25],[0.5,0.015],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))              
+        ax1.add_patch(FancyArrowPatch([0.4,0.25],[0.3,0.085],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.38,0.3],[0.25,0.25],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.35,0.5],[0.20,0.5],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
+        ax1.add_patch(FancyArrowPatch([0.38,0.7],[0.25,0.75],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))        
+        ax1.add_patch(FancyArrowPatch([0.4,0.75],[0.3,0.925],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))       
+        ax1.text(0.395,0.49,'Wind Direction',fontsize=70,color='k')
+        ax0 = plt.axes([0,-.15, 1 , 1])
+        ax0.grid(False)
+        ax0.axis('off')
+        
+        ax2 = plt.axes([.40, .91, x , y])
+        ax2.axis('off')
+        data = grp.variables['N'][:]
+        normalize = matplotlib.colors.Normalize(vmin=min(data), vmax=max(data))
+        cax, _ = matplotlib.colorbar.make_axes(ax0,orientation='horizontal',anchor=(0.5,-1.25))
+        cmap = matplotlib.cm.get_cmap('viridis')
+        cbar = matplotlib.colorbar.ColorbarBase(cax, cmap=cmap, norm=normalize, orientation='horizontal')
+        cbar.ax.tick_params(labelsize=40) 
+        colors = [cmap(normalize(value)) for value in data]      
+        ax2.scatter(xx,yy,marker = '.', color=colors, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax3 = plt.axes([0.635, 0.86, x, y])
+        ax3.axis('off')
+        data1 = grp.variables['NE'][:]
+        colors1 = [cmap(normalize(value)) for value in data1]
+        ax3.scatter(xx,yy,marker = '.', color=colors1, zorder=.25)
+        
+        ax4 = plt.axes([0.165, 0.86, x, y])
+        ax4.axis('off')
+        data2 = grp.variables['NW'][:]
+        colors2 = [cmap(normalize(value2)) for value2 in data2]
+        ax4.scatter(xx,yy,marker = '.', color=colors2, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax5 = plt.axes([0.025, 0.625, x, y])
+        ax5.axis('off')
+        data3 = grp.variables['WNW'][:]
+        colors3 = [cmap(normalize(value3)) for value3 in data3]
+        ax5.scatter(xx,yy,marker = '.', color=colors3, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax6 = plt.axes([-.015, 0.39, x, y])
+        ax6.axis('off')
+        data4 = grp.variables['W'][:]
+        colors4 = [cmap(normalize(value4)) for value4 in data4]
+        ax6.scatter(xx,yy,marker = '.', color=colors4, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+
+        ax7 = plt.axes([0.025, 0.155, x, y])
+        ax7.axis('off')
+        data5 = grp.variables['WSW'][:]
+        colors5 = [cmap(normalize(value5)) for value5 in data5]
+        ax7.scatter(xx,yy,marker = '.', color=colors5, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax8 = plt.axes([0.165, -.08, x, y])
+        ax8.axis('off')
+        data6 = grp.variables['SW'][:]
+        colors6 = [cmap(normalize(value6)) for value6 in data6]
+        ax8.scatter(xx,yy,marker = '.', color=colors6, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax9 = plt.axes([0.4, -.13, x, y])
+        ax9.axis('off')
+        data7 = grp.variables['S'][:]
+        colors7 = [cmap(normalize(value7)) for value7 in data7]
+        ax9.scatter(xx,yy,marker = '.', color=colors7, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax10 = plt.axes([0.635, -.08, x, y])
+        ax10.axis('off')
+        data8 = grp.variables['SE'][:]
+        colors8 = [cmap(normalize(value8)) for value8 in data8]
+        ax10.scatter(xx,yy,marker = '.', color=colors8, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax11 = plt.axes([0.775,0.155,x,y])
+        ax11.axis('off')
+        data9 = grp.variables['ESE'][:]
+        colors9 = [cmap(normalize(value9)) for value9 in data9]
+        ax11.scatter(xx,yy,marker = '.', color=colors9, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax12 = plt.axes([0.815, 0.39, x, y])
+        ax12.axis('off')
+        data10 = grp.variables['E'][:]
+        colors10 = [cmap(normalize(value10)) for value10 in data10]
+        ax12.scatter(xx,yy,marker = '.', color=colors10, zorder=.25)
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        ax13 = plt.axes([0.775,0.625,x,y])
+        ax13.axis('off')
+        data11 = grp.variables['ENE'][:]
+        colors11 = [cmap(normalize(value11)) for value11 in data11]
+        ax13.scatter(xx,yy,marker = '.', color=colors11, zorder=.25)       
+        plt.xlim(lon1,lon2)
+        plt.ylim(lat1,lat2)
+        
+        return plt.show()
+            
+        
         
