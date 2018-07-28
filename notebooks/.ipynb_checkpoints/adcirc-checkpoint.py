@@ -236,133 +236,185 @@ class adcirc:
    
     def plot_surf_dir(grp,lat1,lat2,lon1,lon2):
         x,y =0.225,0.225
+        x2,y2,data2 = [],[],[]
         xx = grp.variables['Longitude'][:]
         yy = grp.variables['Latitude'][:]
+
         l1 = [(0,.75),(1,0.25)]
         l2 = [(.25,1),]
         (lx1,ly1) = zip(*l1)
         fig_title='Surface Directional Roughness Length'
-        plt.text(.5, 1.40, fig_title,horizontalalignment='center',fontsize=100)
+        plt.text(.5, 1.40, fig_title,horizontalalignment='center',fontsize=40)
 
         ax1 = plt.subplot()
         ax1.grid(False)
         ax1.axis('off')
         # Arrows pointing in the 12 directions
-        ax1.add_patch(FancyArrowPatch([0.5,0.75],[0.5,0.95],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.6,0.75],[0.7,0.925],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.625,0.7],[0.75,0.75],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.65,0.5],[0.8,0.5],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.625,0.3],[0.75,0.25],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))        
-        ax1.add_patch(FancyArrowPatch([0.6,0.25],[0.7,0.085],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.5,0.25],[0.5,0.015],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))              
-        ax1.add_patch(FancyArrowPatch([0.4,0.25],[0.3,0.085],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.38,0.3],[0.25,0.25],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.35,0.5],[0.20,0.5],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))
-        ax1.add_patch(FancyArrowPatch([0.38,0.7],[0.25,0.75],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))        
-        ax1.add_patch(FancyArrowPatch([0.4,0.75],[0.3,0.925],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=70))       
-        ax1.text(0.395,0.49,'Wind Direction',fontsize=70,color='k')
-        ax0 = plt.axes([0,-.15, 1 , 1])
+        ax1.add_patch(FancyArrowPatch([0.5,0.75],[0.5,0.95],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.6,0.75],[0.7,0.925],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.625,0.7],[0.75,0.75],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.65,0.5],[0.8,0.5],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.625,0.3],[0.75,0.25],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))        
+        ax1.add_patch(FancyArrowPatch([0.6,0.25],[0.7,0.085],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.5,0.25],[0.5,0.015],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))              
+        ax1.add_patch(FancyArrowPatch([0.4,0.25],[0.3,0.085],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.38,0.3],[0.25,0.25],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.35,0.5],[0.20,0.5],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.38,0.7],[0.25,0.75],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))        
+        ax1.add_patch(FancyArrowPatch([0.4,0.75],[0.3,0.925],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))       
+        ax1.text(0.395,0.49,'Wind Direction',fontsize=27.5,color='k')
+        ax0 = plt.axes([0,-.25, 1 , 1])
         ax0.grid(False)
         ax0.axis('off')
         
         ax2 = plt.axes([.40, .91, x , y])
         ax2.axis('off')
         data = grp.variables['N'][:]
-        normalize = matplotlib.colors.Normalize(vmin=min(data), vmax=max(data))
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        normalize = matplotlib.colors.Normalize(vmin=min(data2), vmax=max(data2))
         cax, _ = matplotlib.colorbar.make_axes(ax0,orientation='horizontal',anchor=(0.5,-1.25))
         cmap = matplotlib.cm.get_cmap('viridis')
         cbar = matplotlib.colorbar.ColorbarBase(cax, cmap=cmap, norm=normalize, orientation='horizontal')
-        cbar.ax.tick_params(labelsize=40) 
-        colors = [cmap(normalize(value)) for value in data]      
-        ax2.scatter(xx,yy,marker = '.', color=colors, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        cbar.ax.tick_params(labelsize=20) 
+        colors = [cmap(normalize(value)) for value in data2]      
+        ax2.scatter(x2,y2,marker = '.', color=colors, zorder=.25)
         
         ax3 = plt.axes([0.635, 0.86, x, y])
         ax3.axis('off')
-        data1 = grp.variables['NE'][:]
-        colors1 = [cmap(normalize(value)) for value in data1]
-        ax3.scatter(xx,yy,marker = '.', color=colors1, zorder=.25)
+        x2,y2,data2 = [],[],[]
+        data = grp.variables['NE'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors3 = [cmap(normalize(value3)) for value3 in data2]
+        ax3.scatter(x2,y2,marker = '.', color=colors3, zorder=.25)
         
         ax4 = plt.axes([0.165, 0.86, x, y])
         ax4.axis('off')
-        data2 = grp.variables['NW'][:]
-        colors2 = [cmap(normalize(value2)) for value2 in data2]
-        ax4.scatter(xx,yy,marker = '.', color=colors2, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        x2,y2,data2 = [],[],[]
+        data = grp.variables['NW'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors4 = [cmap(normalize(value4)) for value4 in data2]
+        ax4.scatter(x2,y2,marker = '.', color=colors4, zorder=.25)
         
         ax5 = plt.axes([0.025, 0.625, x, y])
         ax5.axis('off')
-        data3 = grp.variables['WNW'][:]
-        colors3 = [cmap(normalize(value3)) for value3 in data3]
-        ax5.scatter(xx,yy,marker = '.', color=colors3, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        x2,y2,data2 = [],[],[]
+        data = grp.variables['WNW'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors5 = [cmap(normalize(value5)) for value5 in data2]
+        ax5.scatter(x2,y2,marker = '.', color=colors5, zorder=.25)
+
         
         ax6 = plt.axes([-.015, 0.39, x, y])
+        x2,y2,data2 = [],[],[]
         ax6.axis('off')
-        data4 = grp.variables['W'][:]
-        colors4 = [cmap(normalize(value4)) for value4 in data4]
-        ax6.scatter(xx,yy,marker = '.', color=colors4, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['W'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors6 = [cmap(normalize(value6)) for value6 in data2]
+        ax6.scatter(x2,y2,marker = '.', color=colors6, zorder=.25)
 
         ax7 = plt.axes([0.025, 0.155, x, y])
+        x2,y2,data2 = [],[],[]
         ax7.axis('off')
-        data5 = grp.variables['WSW'][:]
-        colors5 = [cmap(normalize(value5)) for value5 in data5]
-        ax7.scatter(xx,yy,marker = '.', color=colors5, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['WSW'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors7 = [cmap(normalize(value7)) for value7 in data2]
+        ax7.scatter(x2,y2,marker = '.', color=colors7, zorder=.25)
         
         ax8 = plt.axes([0.165, -.08, x, y])
+        x2,y2,data2 = [],[],[]
         ax8.axis('off')
-        data6 = grp.variables['SW'][:]
-        colors6 = [cmap(normalize(value6)) for value6 in data6]
-        ax8.scatter(xx,yy,marker = '.', color=colors6, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['SW'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors8 = [cmap(normalize(value8)) for value8 in data2]
+        ax8.scatter(xx,yy,marker = '.', color=colors8, zorder=.25)
         
         ax9 = plt.axes([0.4, -.13, x, y])
+        x2,y2,data2 = [],[],[]
         ax9.axis('off')
-        data7 = grp.variables['S'][:]
-        colors7 = [cmap(normalize(value7)) for value7 in data7]
-        ax9.scatter(xx,yy,marker = '.', color=colors7, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['S'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors9 = [cmap(normalize(value9)) for value9 in data2]
+        ax9.scatter(x2,y2,marker = '.', color=colors9, zorder=.25)
         
         ax10 = plt.axes([0.635, -.08, x, y])
+        x2,y2,data2 = [],[],[]
         ax10.axis('off')
-        data8 = grp.variables['SE'][:]
-        colors8 = [cmap(normalize(value8)) for value8 in data8]
-        ax10.scatter(xx,yy,marker = '.', color=colors8, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['SE'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors10 = [cmap(normalize(value10)) for value10 in data2]
+        ax10.scatter(x2,y2,marker = '.', color=colors10, zorder=.25)
         
         ax11 = plt.axes([0.775,0.155,x,y])
+        x2,y2,data2 = [],[],[]
         ax11.axis('off')
-        data9 = grp.variables['ESE'][:]
-        colors9 = [cmap(normalize(value9)) for value9 in data9]
-        ax11.scatter(xx,yy,marker = '.', color=colors9, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['ESE'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors11 = [cmap(normalize(value11)) for value11 in data2]
+        ax11.scatter(x2,y2,marker = '.', color=colors11, zorder=.25)
         
         ax12 = plt.axes([0.815, 0.39, x, y])
+        x2,y2,data2 = [],[],[]
         ax12.axis('off')
-        data10 = grp.variables['E'][:]
-        colors10 = [cmap(normalize(value10)) for value10 in data10]
-        ax12.scatter(xx,yy,marker = '.', color=colors10, zorder=.25)
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['E'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors12= [cmap(normalize(value12)) for value12 in data2]
+        ax12.scatter(x2,y2,marker = '.', color=colors12, zorder=.25)
         
         ax13 = plt.axes([0.775,0.625,x,y])
+        x2,y2,data2 = [],[],[]
         ax13.axis('off')
-        data11 = grp.variables['ENE'][:]
-        colors11 = [cmap(normalize(value11)) for value11 in data11]
-        ax13.scatter(xx,yy,marker = '.', color=colors11, zorder=.25)       
-        plt.xlim(lon1,lon2)
-        plt.ylim(lat1,lat2)
+        data = grp.variables['ENE'][:]
+        for i in range(0,len(xx)):
+            if xx[i] > lon1 and xx[i] < lon2 and yy[i] > lat1 and yy[i] < lat2:
+                x2.append(xx[i])
+                y2.append(yy[i])
+                data2.append(data[i])
+        colors13 = [cmap(normalize(value13)) for value13 in data2]
+        ax13.scatter(x2,y2,marker = '.', color=colors11, zorder=.25)       
         
         return plt.show()
             
