@@ -4,8 +4,7 @@
 ## Description:
 #### Notebooks for working with NOAA tide gauges, and ADCIRC inputs/outputs.
 
-This repository contains information on pre- and post-processing ADCIRC models. 
-
+This repository was created to document and the development of tools used for the analysis and modeling of coastal flood hazards.
 ## Contents and Capabilities:
 - Notebooks 
     1. [NOAA Tide Gauge](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/noaa_tide.ipynb)
