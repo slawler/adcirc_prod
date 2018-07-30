@@ -14,8 +14,7 @@
     1. Example NETCDF data for model QC notebook
 
 ## Description:
-    
-
+    Perform astronomic tide simulations and a series of storm surge runs to calibrate and validate the UnSWAN+ADCIRC model. The study mesh to be used is that which was developed as part of the sensitivity work which added increased mesh resolution in the study areas and updated the topography and bathymetry. Simulated astronomic tides and hurricane storm surge will be compared against verified tidal constituents maintained by NOAA, tidal elevation hydrographs, and historic storm surge high water marks (HWMs) to ensure the model is reasonably reproducing the hydrodynamic behavior within the study area.
 
 
 
