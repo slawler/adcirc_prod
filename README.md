@@ -3,7 +3,7 @@
 
 ## Contents:
 1. Notebooks
-- [Model QC tool](https://github.com/tmiesse/adcirc_prod/blob/master/notebooks/ModelQC__v2.ipynb)
+  - [Model QC tool](https://github.com/tmiesse/adcirc_prod/blob/master/notebooks/ModelQC__v2.ipynb)
 
 
 
