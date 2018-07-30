@@ -2,6 +2,7 @@
 <img style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/DewberryLogo_RGB.png" width=150px>
 
 ## Description:
+Notebooks for working with NOAA tide gauges, and ADCIRC inputs/outputs.
 This repository contains information on pre- and post-processing ADCIRC models. 
 
 ## Contents and Capabilities:
