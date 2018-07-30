@@ -2,7 +2,7 @@
 <img style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/DewberryLogo_RGB.png" width=150px>
 
 ## Description:
-These notebook tools analyze the inputs/outputs from ADCIRC models to quality check, and visually understand
+Notebook tools analyze the inputs/outputs from ADCIRC models to QC, and visually understand
 each attribute within it. The data is assumed to be in NETCDF4 file format when using the notebooks.
 
 ## Contents and Capabilities:
