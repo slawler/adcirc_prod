@@ -19,6 +19,3 @@ each attribute within. The data is assumed to be in NETCDF4 file format when usi
 
 - Example
 <img  style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/surface_canopy.PNG" width=1000px>
-
-<img  style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/surface_direction.PNG" width=950px>
-
