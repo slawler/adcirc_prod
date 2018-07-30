@@ -1,0 +1,13 @@
+# Jupyter
+__pycache__/
+.ipynb_checkpoints/
+
+
+# MAC
+.DS_Store
+.AppleDouble
+.LSOverride
+
+
+# Windows
+Thumbs.db
