@@ -2,7 +2,7 @@
 <img style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/DewberryLogo_RGB.png" width=150px>
 
 ## Description:
-This repository contains information on QC, conversions, and plotting ADCIRC model files.
+This repository contains information on QC, conversions, and plotting ADCIRC input/outputs.
 
 ## Contents and Capabilities:
 - Notebooks 
