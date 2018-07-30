@@ -2,8 +2,8 @@
 <img style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/DewberryLogo_RGB.png" width=150px>
 
 ## Description:
-Dewberry's customized ADCIRC library is utilized in Jupyter Lab to analyze the inputs/outputs from ADCIRC models to QC, and visually 
-understand each attribute within it. This library has a wide range of capabilities from file conversion to plotting input/output data.
+Dewberry's customized ADCIRC library is utilized in Jupyter Lab to analyze the inputs/outputs from ADCIRC models to QC, and plot
+attributes within it. This library has a wide range of capabilities from file conversion to plotting input/output data.
 
 ## Contents and Capabilities:
 - Notebooks 
