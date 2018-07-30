@@ -11,3 +11,6 @@ __pycache__/
 
 # Windows
 Thumbs.db
+
+# Data Folder
+data/
