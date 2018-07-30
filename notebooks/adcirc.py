@@ -17,6 +17,8 @@ import numpy as np
 from importlib import reload
 import adcirc_input_lib ; reload(adcirc_input_lib)
 from adcirc_input_lib import *
+import noaa_lib ; reload(noaa_lib)
+from noaa_lib import *
 import netCDF4 as nc4
 from datetime import datetime
 import matplotlib.cbook
@@ -24,7 +26,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from mpl_toolkits.basemap import Basemap
 from matplotlib.patches import FancyArrowPatch
-
+import plotly.graph_objs as go
 class adcirc:
     
     def __init__(self,path, file):
@@ -32,7 +34,24 @@ class adcirc:
         self.file = file
         self.fp   = os.path.join(self.path,self.file)
         
+    
+    def plot_hurricane(begin1, end1, stations, title1):
+        begin = 'begin_date='+ begin1
+        end   = 'end_date='+ end1
+        hatt   = pd.read_csv(tide_data(begin, end, stations[0]['Hatteras']))
+        duke   = pd.read_csv(tide_data(begin, end, stations[1]['Beaufort']))
+        wright = pd.read_csv(tide_data(begin, end, stations[2]['Wrightsville']))
+        hatt.name, duke.name, wright.name ='Hatteras','Beaufort', 'Wrightsville'
+        datasets = [duke, wright, hatt]
+        obs, dtm  = ' Water Level', 'Date Time'
+        beg = begin.split('=')[1] + ' - ' + end.split('=')[1]
+        title = title1 + ' ' + beg
+        data, layout = noaa_plot(datasets, obs, dtm, title)
         
+        return data, layout
+    
+    
+    
     def attributes(self, name='none'):
         attributes =['primitive_weighting_in_continuity_equation',
                      'surface_submergence_state','quadratic_friction_coefficient_at_sea_floor',
@@ -57,9 +76,6 @@ class adcirc:
 
         
     def read_fort13(self, attribute):
-        #a = dt.now()
-        #print("\n Started finding nodes in attributes at \n") 
-        #print(a)
         x = 0
         table_v2 = pd.DataFrame()
         with open(self.fp, 'r') as f:
@@ -105,15 +121,9 @@ class adcirc:
                 table_v3 = pd.DataFrame(data)
                 table_v3.columns=[attribute['Parameter'][x].split('_')[0]+'_'+attribute['Parameter'][x].split('_')[1]]
                 table_v2 = pd.concat([table_v2,table_v3],axis=1,sort=False)
-        #b = dt.now()
-        #c = b-a
-        #print("===========END========== \n")
-        #print("Processing Time : ")
-        #print(c)  
         return table_v2 
         
-        
-        
+             
     # Create a table for Fort.14
     def read_fort14(self):
         nodesx, nodesy, value, node_id, node_name, loc = [], [], [], [], [], []
@@ -135,7 +145,8 @@ class adcirc:
         table.insert(2,'node_y',nodesy)
         table.insert(3,'value',value)
         return table     
-
+  
+    
     def seperate_13(table):
         xx = list(table.columns.values)
         for i in range(0,len(xx)):
@@ -173,6 +184,7 @@ class adcirc:
         f.history     = 'Created ' + today.strftime('%d/%m/%y')
         f.close()
         return
+
     
     def add_attribute2nc4(netcdf_path, table, attr, lon='lon',lat='lat',surf='0'):
         head = list(table)
@@ -418,5 +430,9 @@ class adcirc:
         
         return plt.show()
             
+        
+
+
+
         
         

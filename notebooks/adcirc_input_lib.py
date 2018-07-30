@@ -137,10 +137,55 @@ def read_fort14(path):
     return table
 
 
+def tide_data(begin_d, end_d, station):
+    website = r'https://tidesandcurrents.noaa.gov/api/'
+    datum = 'datum=NAVD'
+    units = 'units=metric'
+    timez = 'time_zone=LST'
+    form = 'format=csv'
+    app = 'datagetter?product=hourly_height&application=NOS.COOPS.TAC.WL'
+    domain = website + app + '&' + station + '&' + begin_d + '&' + end_d + '&' + datum + '&' + units + '&' + timez + '&' + form
+    return domain
 
 
+def noaa_plot(datasets, obs, dtm, title):
+    data = list()
+    for dataset in datasets:
+        water_level = dataset.loc[:,obs]
+        date = dataset.loc[:,dtm]
+        c_list = ['rgb(51, 204, 51)','rgb(0, 255, 204)',
+                      'rgb(0, 204, 255)','rgb(102, 255, 255)',
+                      'rgb(0, 102, 153)','rgb(0, 0, 255)',
+                      'rgb(51, 51, 255)','rgb(102, 0, 255)',
+                      'rgb(153, 153, 255)','rgb(204, 0, 255)',
+                      'rgb(255, 51, 204)','rgb(204, 0, 0)',
+                      'rgb(255, 153, 0)','rgb(204, 255, 51)',
+                      'rgb(0, 153, 0)']
+        for x in range(1):
+                y=random.randint(1,14)
 
+#                print(y)
+                color = c_list[y]
+                
+        trace = go.Scatter(
+                x = date,
+                y = water_level,
+                name = dataset.name,
+                        line = dict(
+                        color = color,
+                    ))
+        data.append(trace)
 
+    layout = go.Layout(dict(title = title),
+                  xaxis = dict(title = 'Time'),
+                  yaxis = dict(title = 'Water level (m) above NavD88'),                     
+                  legend= dict(orientation = "h"),
+                  font = dict(color = 'rgb(255,255,255)'),
+                  paper_bgcolor = 'rgb(0,0,0)',
+                  plot_bgcolor = 'rgb(0,0,0)',
+                      )
+    
+    return data, layout
 
 
 
