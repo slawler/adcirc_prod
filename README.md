@@ -3,7 +3,8 @@
 
 ## Description:
 These notebook tools analyze the inputs/outputs from ADCIRC models to quality check, and visually understand
-each attribute within. The data is assumed to be in NETCDF4 file format when using the notebooks.
+each attribute within. The notebooks also have the capabilities of generating input files for ADCIRC depending 
+on the model.The data is assumed to be in NETCDF4 file format when using the notebooks.
 
 ## Contents and Capabilities:
 - Notebooks 
