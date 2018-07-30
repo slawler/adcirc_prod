@@ -3,7 +3,15 @@
 
 ## Description:
 Dewberry's customized ADCIRC library is utilized in Jupyter Lab to analyze the inputs/outputs from ADCIRC models.
-
+-   Functions within:
+    1. attributes in fort13
+    2. read_fort13
+    3. read_fort14
+    4. seperate_13
+    5. initnc4
+    6. add_attribute2nc4
+    7. attr_plot
+    8. plot_surf_dir
 ## Contents and Capabilities:
 - Notebooks 
     1. [NOAA Tide Gauge](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/noaa_tide.ipynb)
