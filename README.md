@@ -14,7 +14,7 @@
     1. Example NETCDF data for model QC notebook
 
 ## Description:
-These notebook tools analyze the inputs/outputs from ADCIRC models to quality check, and vizually understand
+These notebook tools analyze the inputs/outputs from ADCIRC models to quality check, and visually understand
 each attribute within. The data is assumed to be in NETCDF4 file format when using the notebooks.
 
 
