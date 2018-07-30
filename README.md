@@ -11,13 +11,13 @@ each attribute within. The data is assumed to be in NETCDF4 file format when usi
     2. [Subdomains](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/subdomain.ipynb)
     3. [Create Fort.15](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/create_fort15.ipynb)
     4. [Model QC tool](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/ModelQC__v2.ipynb)
-- Python:
+- Python
     1. Dewberry's customized python library for adcirc applications
-- Data:
+- Data
     1. Example NETCDF data for model QC notebook
 
 
-- Example:
+- Example
 <img  style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/surface_canopy.PNG" width=1000px>
 
 
