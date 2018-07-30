@@ -9,7 +9,7 @@
     3. [Subdomains](https://github.com/tmiesse/adcirc_prod/blob/master/notebooks/subdomain.ipynb)
     4. [Create Fort.15](https://github.com/tmiesse/adcirc_prod/blob/master/notebooks/create_fort15.ipynb)
 - py_scripts:
-    1. Dewberry's custom python library for adcirc applications
+    1. Customized python library for adcirc applications
 - Data:
     1. Example NETCDF data for model QC notebook
 
@@ -18,13 +18,6 @@ These notebook tools analyze the inputs/outputs from ADCIRC models to quality ch
 each attribute within. The data is assumed to be in NETCDF4 file format when using the notebooks.
 - For example:
 <img  style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/surface_canopy.PNG" width=1000px>
-
-
-
-
-
-
-
 
 
 
