@@ -3,7 +3,7 @@
 
 ## Description:
 Dewberry's customized ADCIRC library is utilized in Jupyter Lab to analyze the inputs/outputs from ADCIRC models.
-####-   Functions within:
+#### -   Functions within:
     1. attributes in fort13
     2. read_fort13
     3. read_fort14
