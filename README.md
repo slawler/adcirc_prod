@@ -9,7 +9,7 @@
     4. [Create Fort.15](https://github.com/tmiesse/adcirc_prod/blob/master/notebooks/create_fort15.ipynb)
 - py_scripts:
     1. Dewberry's custom python library for adcirc applications
-- QC:
+- Data:
     1. Example NETCDF data for model QC notebook
 
 
