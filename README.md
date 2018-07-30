@@ -1,11 +1,11 @@
 # ADCIRC
 <img style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/DewberryLogo_RGB.png" width=150px>
 
-## Description:
+### Description:
 Dewberry's customized ADCIRC library is utilized in Jupyter Lab to analyze the inputs/outputs from ADCIRC models to QC, and plot.
 This library has a wide range of capabilities from file conversion to plotting input/output data.
 
-## Contents and Capabilities:
+### Contents and Capabilities:
 - Notebooks 
     1. [NOAA Tide Gauge](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/noaa_tide.ipynb)
     2. [Subdomains](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/subdomain.ipynb)
