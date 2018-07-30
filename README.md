@@ -13,8 +13,7 @@ This library has a wide range of capabilities from file conversion to plotting i
     4. [Model QC tool](http://nbviewer.jupyter.org/github/tmiesse/adcirc_prod/blob/master/notebooks/ModelQC__v2.ipynb)
 - Python
     1. Dewberry's customized python library for adcirc applications
-- Data
-    1. Example NETCDF data for model QC notebook
+
 
 
 - Example
