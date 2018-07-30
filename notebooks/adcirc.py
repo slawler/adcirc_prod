@@ -257,7 +257,7 @@ class adcirc:
         ax1.add_patch(FancyArrowPatch([0.63,0.37],[0.76,0.24],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))        
         ax1.add_patch(FancyArrowPatch([0.6,0.25],[0.68,0.05],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
         ax1.add_patch(FancyArrowPatch([0.5,0.2],[0.5,0.01],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))              
-        ax1.add_patch(FancyArrowPatch([0.4,0.25],[0.38,0.05],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
+        ax1.add_patch(FancyArrowPatch([0.4,0.25],[0.32,0.05],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
         ax1.add_patch(FancyArrowPatch([0.37,0.37],[0.24,0.24],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
         ax1.add_patch(FancyArrowPatch([0.35,0.5],[0.20,0.5],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))
         ax1.add_patch(FancyArrowPatch([0.37,0.63],[0.24,0.74],shrinkA=0,shrinkB=0,arrowstyle='simple',color='k',mutation_scale=40))        
