@@ -225,7 +225,7 @@ class adcirc:
                             f.close()
                             break
         return
-  
+    
         
     def attr_plot(grp,title,ax,lat1,lat2,lon1,lon2,data='data',pixels='600'):
         x = grp.variables['Longitude'][:]
@@ -244,8 +244,8 @@ class adcirc:
         cbar = matplotlib.colorbar.ColorbarBase(cax, cmap=cmap, norm=normalize)
         
         return plt.show()
+    
         
-   
     def plot_surf_dir(grp,lat1,lat2,lon1,lon2):
         x,y =0.225,0.225
         x2,y2,data2 = [],[],[]
