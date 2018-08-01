@@ -21,12 +21,14 @@ import noaa_lib ; reload(noaa_lib)
 from noaa_lib import *
 import netCDF4 as nc4
 from datetime import datetime
-import matplotlib.cbook
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib.tri as tri
 from mpl_toolkits.basemap import Basemap
 from matplotlib.patches import FancyArrowPatch
-import plotly.graph_objs as go
+from matplotlib.animation import FuncAnimation
+
+
 class adcirc:
     
     def __init__(self,path, file):
@@ -430,6 +432,40 @@ class adcirc:
         
         return plt.show()
             
+        
+    def global_vid(global_path,fig,ax,title,hours,lon1,lon2,lat1,lat2):
+        file1 = nc4.Dataset(global_path)
+        lat  = file1.variables['y'][:]
+        lon  = file1.variables['x'][:]
+        gridvars = nc4.Dataset(global_path).variables
+        var_element = 'element'
+        elems = gridvars[var_element][:,:]-1
+        m = Basemap(projection='cyl',llcrnrlat=lat1,urcrnrlat=lat2,llcrnrlon=lon1,urcrnrlon=lon2,resolution='h', epsg = 4269)
+        m.drawcoastlines(color='k')
+        m.arcgisimage(service='World_Street_Map', xpixels=int(200), verbose= False)
+        i=1
+        def animate(i):
+            data = file1.variables['zeta'][i,:]
+            z = data.data
+            triang = tri.Triangulation(lon,lat, triangles=elems)
+            if data.mask.any():
+                # -99999 entries in 'data' array are usually masked, mask all corresponding triangles
+                point_mask_indices = np.where(data.mask)
+                tri_mask = np.any(np.in1d(elems, point_mask_indices).reshape(-1, 3), axis=1)
+                triang.set_mask(tri_mask)
+                
+            plt.colorbar(cmap='jet',format = "%.1f")
+            levels = np.arange(-1.5, 1.5, 0.1)
+            plt.tricontourf(triang, data, levels=levels,alpha=0.9,vmin=-1.5, vmax=3, aspect='auto',cmap='jet')
+            plt.title(title)
+                 
+        anim = FuncAnimation(fig, animate, interval=100, frames=hours-1, repeat=True)    
+        return plt.show()
+        
+        
+        
+        
+        
         
 
 
