@@ -435,7 +435,7 @@ class adcirc:
         return plt.show()
             
         
-    def global_vid(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2):
+    def global_vid(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2,global_type='water_level'):
         wl=[]
         xx = netcdf_file.variables['x'][:]
         yy = netcdf_file.variables['y'][:]
@@ -443,26 +443,80 @@ class adcirc:
         var_element = 'element'
         elems = gridvars[var_element][:,:]-1
         m = Basemap(projection='cyl',llcrnrlat=lat1,urcrnrlat=lat2,llcrnrlon=lon1,urcrnrlon=lon2,resolution='h', epsg = 4269)
-        for i in range(0,hours):
-            i=i+1
-            data1 = netcdf_file.variables['zeta'][i,:]
-            file_number = '%02d'%i
-            triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='World_Street_Map', xpixels = 600, verbose= False)
-            m.drawcoastlines(color='k')
-            if data1.mask.any():
-                point_mask_indices = np.where(data1.mask)
-                tri_mask = np.any(np.in1d(elems, point_mask_indices).reshape(-1, 3), axis=1)
-                triang.set_mask(tri_mask)
-            plt.xlim([lon1, lon2])
-            plt.ylim([lat1, lat2])    
-            plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=-1.1, vmax=3, aspect='auto',cmap='jet')
-            wl.append('WL{}.png'.format(file_number))
-            plt.title(title + '\n')
-            plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
-            plt.close()
-            os.chdir(global_path)
-            images = []
+        if global_type=='water_level':
+            for i in range(0,hours):
+                i=i+1
+                data1 = netcdf_file.variables['zeta'][i,:]
+                file_number = '%02d'%i
+                triang = tri.Triangulation(xx,yy, triangles=elems)
+                m.arcgisimage(service='World_Street_Map', xpixels = 700, verbose= False)
+                m.drawcoastlines(color='k')
+                if data1.mask.any():
+                    point_mask_indices = np.where(data1.mask)
+                    tri_mask = np.any(np.in1d(elems, point_mask_indices).reshape(-1, 3), axis=1)
+                    triang.set_mask(tri_mask)
+                plt.xlim([lon1, lon2])
+                plt.ylim([lat1, lat2])    
+                plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=-1.1, vmax=3, aspect='auto',cmap='jet')
+                wl.append('WL{}.png'.format(file_number))
+                plt.colorbar(cmap='jet',format = "%.1f") 
+                plt.title(title + '\n')
+                plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+                plt.close()
+                
+        elif global_type=='velocity':
+            for i in range(0,hours):
+                i=i+1
+                u = netcdf_file.variables['u-vel'][i,:]
+                v = netcdf_file.variables['v-vel'][i,:]
+                file_number = '%02d'%i
+                m.arcgisimage(service='World_Street_Map', xpixels = 700, verbose= False)
+                m.drawcoastlines(color='k')
+                plt.quiver(xx,yy,u,v)
+                plt.xlim([lon1, lon2])
+                plt.ylim([lat1, lat2])    
+                wl.append('WL{}.png'.format(file_number))
+                plt.title(title + '\n')
+                plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+                plt.close()
+        elif global_type=='pressure':
+            for i in range(0,hours):
+                i=i+1
+                data1 = netcdf_file.variables['pressure'][i,:]
+                file_number = '%02d'%i
+                triang = tri.Triangulation(xx,yy, triangles=elems)
+                m.arcgisimage(service='World_Street_Map', xpixels = 700, verbose= False)
+                m.drawcoastlines(color='k')
+                if data1.mask.any():
+                    point_mask_indices = np.where(data1.mask)
+                    tri_mask = np.any(np.in1d(elems, point_mask_indices).reshape(-1, 3), axis=1)
+                    triang.set_mask(tri_mask)
+                plt.xlim([lon1, lon2])
+                plt.ylim([lat1, lat2])    
+                plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=9.75, vmax=10.75, aspect='auto',cmap='jet')
+                wl.append('WL{}.png'.format(file_number))
+                plt.colorbar(cmap='jet',format = "%.1f") 
+                plt.title(title + '\n')
+                plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+                plt.close()
+        elif global_type=='wind':
+            for i in range(0,hours):
+                i=i+1
+                u = netcdf_file.variables['windx'][i,:]
+                v = netcdf_file.variables['windy'][i,:]
+                file_number = '%02d'%i
+                m.arcgisimage(service='World_Street_Map', xpixels = 700, verbose= False)
+                m.drawcoastlines(color='k')
+                plt.quiver(xx,yy,u,v)
+                plt.xlim([lon1, lon2])
+                plt.ylim([lat1, lat2])    
+                wl.append('WL{}.png'.format(file_number))
+                plt.title(title + '\n')
+                plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+                plt.close()
+                
+        os.chdir(global_path)
+        images = []
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
             images.append(frames)
