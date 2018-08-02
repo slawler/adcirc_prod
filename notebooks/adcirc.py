@@ -449,7 +449,7 @@ class adcirc:
                 data1 = netcdf_file.variables['zeta'][i,:]
                 file_number = '%02d'%i
                 triang = tri.Triangulation(xx,yy, triangles=elems)
-                m.arcgisimage(service='World_Street_Map', xpixels = 700, verbose= False)
+                m.arcgisimage(service='World_Street_Map', xpixels = 400, verbose= False)
                 m.drawcoastlines(color='k')
                 if data1.mask.any():
                     point_mask_indices = np.where(data1.mask)
@@ -461,7 +461,7 @@ class adcirc:
                 wl.append('WL{}.png'.format(file_number))
                 plt.colorbar(cmap='jet',format = "%.1f") 
                 plt.title(title + '\n')
-                plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+                plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
                 plt.close()
                 
         elif global_type=='velocity':
@@ -477,7 +477,7 @@ class adcirc:
                 plt.ylim([lat1, lat2])    
                 wl.append('WL{}.png'.format(file_number))
                 plt.title(title + '\n')
-                plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+                plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
                 plt.close()
         elif global_type=='pressure':
             for i in range(0,hours):
@@ -512,10 +512,8 @@ class adcirc:
                 plt.ylim([lat1, lat2])    
                 wl.append('WL{}.png'.format(file_number))
                 plt.title(title + '\n')
-                plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+                plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
                 plt.close()
-                
-        os.chdir(global_path)
         images = []
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
@@ -526,7 +524,7 @@ class adcirc:
            delay=.1,
            duration=300,
            loop=0)
-        for f in glob.glob(os.path.join(global_path,'WL*')):
+        for f in glob.glob('WL*'):
             os.remove(f)
         return
         
