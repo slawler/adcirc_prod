@@ -27,6 +27,8 @@ import matplotlib.tri as tri
 from mpl_toolkits.basemap import Basemap
 from matplotlib.patches import FancyArrowPatch
 from matplotlib.animation import FuncAnimation
+from PIL import *
+import glob
 
 
 class adcirc:
@@ -433,34 +435,46 @@ class adcirc:
         return plt.show()
             
         
-    def global_vid(global_path,fig,ax,title,hours,lon1,lon2,lat1,lat2):
-        file1 = nc4.Dataset(global_path)
-        lat  = file1.variables['y'][:]
-        lon  = file1.variables['x'][:]
-        gridvars = nc4.Dataset(global_path).variables
+    def global_vid(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2):
+        wl=[]
+        xx = netcdf_file.variables['x'][:]
+        yy = netcdf_file.variables['y'][:]
+        gridvars = netcdf_file.variables      
         var_element = 'element'
         elems = gridvars[var_element][:,:]-1
         m = Basemap(projection='cyl',llcrnrlat=lat1,urcrnrlat=lat2,llcrnrlon=lon1,urcrnrlon=lon2,resolution='h', epsg = 4269)
-        m.drawcoastlines(color='k')
-        m.arcgisimage(service='World_Street_Map', xpixels=int(200), verbose= False)
-        i=1
-        def animate(i):
-            data = file1.variables['zeta'][i,:]
-            z = data.data
-            triang = tri.Triangulation(lon,lat, triangles=elems)
-            if data.mask.any():
-                # -99999 entries in 'data' array are usually masked, mask all corresponding triangles
-                point_mask_indices = np.where(data.mask)
+        for i in range(0,hours):
+            i=i+1
+            data1 = netcdf_file.variables['zeta'][i,:]
+            file_number = '%02d'%i
+            triang = tri.Triangulation(xx,yy, triangles=elems)
+            m.arcgisimage(service='World_Street_Map', xpixels = 600, verbose= False)
+            m.drawcoastlines(color='k')
+            if data1.mask.any():
+                point_mask_indices = np.where(data1.mask)
                 tri_mask = np.any(np.in1d(elems, point_mask_indices).reshape(-1, 3), axis=1)
                 triang.set_mask(tri_mask)
-                
-            plt.colorbar(cmap='jet',format = "%.1f")
-            levels = np.arange(-1.5, 1.5, 0.1)
-            plt.tricontourf(triang, data, levels=levels,alpha=0.9,vmin=-1.5, vmax=3, aspect='auto',cmap='jet')
-            plt.title(title)
-                 
-        anim = FuncAnimation(fig, animate, interval=100, frames=hours-1, repeat=True)    
-        return plt.show()
+            plt.xlim([lon1, lon2])
+            plt.ylim([lat1, lat2])    
+            plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=-1.1, vmax=3, aspect='auto',cmap='jet')
+            wl.append('WL{}.png'.format(file_number))
+            plt.title(title + '\n')
+            plt.savefig(os.path.join(global_path,'WL{}.png'.format(file_number)),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+            plt.close()
+            os.chdir(global_path)
+            images = []
+        for ii in range(0,len(wl)):
+            frames = Image.open(wl[ii])
+            images.append(frames)
+        images[0].save(title.split(' ')[0]+title.split(' ')[1]+'.gif',
+           save_all=True,
+           append_images=images[1:],
+           delay=.1,
+           duration=300,
+           loop=0)
+        for f in glob.glob(os.path.join(global_path,'WL*')):
+            os.remove(f)
+        return
         
         
         
