@@ -447,7 +447,7 @@ class adcirc:
             data1 = netcdf_file.variables['zeta'][i,:]
             file_number = '%02d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='World_Street_Map', xpixels = 400, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
@@ -488,7 +488,7 @@ class adcirc:
             u = netcdf_file.variables['u-vel'][i,:]
             v = netcdf_file.variables['v-vel'][i,:]
             file_number = '%02d'%i
-            m.arcgisimage(service='World_Street_Map', xpixels = 700, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
             m.drawcoastlines(color='k')
             plt.quiver(xx,yy,u,v)
             plt.xlim([lon1, lon2])
@@ -524,7 +524,7 @@ class adcirc:
             data1 = netcdf_file.variables['pressure'][i,:]
             file_number = '%02d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='World_Street_Map', xpixels = 400, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
@@ -565,7 +565,7 @@ class adcirc:
             u = netcdf_file.variables['windx'][i,:]
             v = netcdf_file.variables['windy'][i,:]
             file_number = '%02d'%i
-            m.arcgisimage(service='World_Street_Map', xpixels = 700, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
             m.drawcoastlines(color='k')
             plt.quiver(xx,yy,u,v)
             plt.xlim([lon1, lon2])
@@ -603,7 +603,7 @@ class adcirc:
             v = nc4_f2.variables['v-vel'][i,:]
             file_number = '%02d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='World_Street_Map', xpixels = 400, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
