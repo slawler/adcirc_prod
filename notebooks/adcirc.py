@@ -24,7 +24,7 @@ import noaa_lib ; reload(noaa_lib)
 from noaa_lib import *
 import netCDF4 as nc4
 import matplotlib as mpl
-from datetime import datetime
+from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 from mpl_toolkits.basemap import Basemap
@@ -435,7 +435,8 @@ class adcirc:
         
         return plt.show()
             
-    def global_water(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2):
+    def global_water(global_path,netcdf_file,title,hours1,levels,lon1,lon2,lat1,lat2,start=None):
+        start_date = datetime.strptime(start,'%Y%m%d%H')
         wl=[]
         xx = netcdf_file.variables['x'][:]
         yy = netcdf_file.variables['y'][:]
@@ -443,12 +444,12 @@ class adcirc:
         var_element = 'element'
         elems = gridvars[var_element][:,:]-1
         m = Basemap(projection='cyl',llcrnrlat=lat1,urcrnrlat=lat2,llcrnrlon=lon1,urcrnrlon=lon2,resolution='h', epsg = 4269)
-        for i in range(0,hours):
+        for i in range(0,hours1):
             i=i+1
             data1 = netcdf_file.variables['zeta'][i,:]
-            file_number = '%02d'%i
+            file_number = '%05d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels=150, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
@@ -456,11 +457,12 @@ class adcirc:
                 triang.set_mask(tri_mask)
             plt.xlim([lon1, lon2])
             plt.ylim([lat1, lat2])    
-            plt.tricontourf(triang, data1, levels=levels,alpha=0.75,vmin=-1.1, vmax=6, aspect='auto',cmap='jet')
+            plt.tricontourf(triang, data1, levels=levels,alpha=0.75,vmin=-3, vmax=5.25, aspect='auto',cmap='jet')
             wl.append('WL{}.png'.format(file_number))
             plt.colorbar(cmap='jet',fraction=0.026,pad=0.04) 
             plt.title(title + '\n')
-            plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+            plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
+            plt.savefig('WL{}.png'.format(file_number),dpi=500, bbox_inches = 'tight', pad_inches = 0.1)
             plt.close()
         images = []
         for ii in range(0,len(wl)):
@@ -476,7 +478,8 @@ class adcirc:
             os.remove(f)    
         return
         
-    def global_velocity(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2):
+    def global_velocity(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2,start=None):
+        start_date = datetime.strptime(start,'%Y%m%d%H')
         wl=[]
         xx = netcdf_file.variables['x'][:]
         yy = netcdf_file.variables['y'][:]
@@ -488,15 +491,16 @@ class adcirc:
             i=i+1
             u = netcdf_file.variables['u-vel'][i,:]
             v = netcdf_file.variables['v-vel'][i,:]
-            file_number = '%02d'%i
-            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
+            file_number = '%05d'%i
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 200, verbose= False)
             m.drawcoastlines(color='k')
             plt.quiver(xx,yy,u,v)
             plt.xlim([lon1, lon2])
             plt.ylim([lat1, lat2])    
             wl.append('WL{}.png'.format(file_number))
             plt.title(title + '\n')
-            plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+            plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
+            plt.savefig('WL{}.png'.format(file_number),dpi=100, bbox_inches = 'tight', pad_inches = 0.1)
             plt.close()
         images = []
         for ii in range(0,len(wl)):
@@ -512,7 +516,8 @@ class adcirc:
             os.remove(f)
         return
 
-    def global_pressure(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2):
+    def global_pressure(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2,start=None):
+        start_date = datetime.strptime(start,'%Y%m%d%H')
         wl=[]
         xx = netcdf_file.variables['x'][:]
         yy = netcdf_file.variables['y'][:]
@@ -523,9 +528,9 @@ class adcirc:
         for i in range(0,hours):
             i=i+1
             data1 = netcdf_file.variables['pressure'][i,:]
-            file_number = '%02d'%i
+            file_number = '%05d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 200, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
@@ -533,11 +538,12 @@ class adcirc:
                 triang.set_mask(tri_mask)
             plt.xlim([lon1, lon2])
             plt.ylim([lat1, lat2])    
-            plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=-1.1, vmax=3, aspect='auto',cmap='jet')
+            plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=8, vmax=13, aspect='auto',cmap='jet')
             wl.append('WL{}.png'.format(file_number))
-            plt.colorbar(cmap='jet',format = "%.1f") 
+            plt.colorbar(cmap='jet',fraction=0.026,pad=0.04)
             plt.title(title + '\n')
-            plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
+            plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
+            plt.savefig('WL{}.png'.format(file_number),dpi=100, bbox_inches = 'tight', pad_inches = 0.1)
             plt.close()
         images = []
         for ii in range(0,len(wl)):
@@ -565,8 +571,8 @@ class adcirc:
             i=i+1
             u = netcdf_file.variables['windx'][i,:]
             v = netcdf_file.variables['windy'][i,:]
-            file_number = '%02d'%i
-            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
+            file_number = '%05d'%i
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 200, verbose= False)
             m.drawcoastlines(color='k')
             plt.quiver(xx,yy,u,v)
             plt.xlim([lon1, lon2])
@@ -602,9 +608,9 @@ class adcirc:
             data1 = nc4_f1.variables['zeta'][i,:]
             u = nc4_f2.variables['u-vel'][i,:]
             v = nc4_f2.variables['v-vel'][i,:]
-            file_number = '%02d'%i
+            file_number = '%05d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 900, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 100, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
