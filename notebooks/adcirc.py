@@ -458,7 +458,7 @@ class adcirc:
             plt.ylim([lat1, lat2])    
             plt.tricontourf(triang, data1, levels=levels,alpha=0.75,vmin=-1.1, vmax=6, aspect='auto',cmap='jet')
             wl.append('WL{}.png'.format(file_number))
-            plt.colorbar(cmap='jet',format = "%.1f") 
+            plt.colorbar(cmap='jet',fraction=0.026,pad=0.04) 
             plt.title(title + '\n')
             plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
             plt.close()
