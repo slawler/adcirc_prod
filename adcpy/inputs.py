@@ -4,7 +4,7 @@ import netCDF4 as nc4
 from datetime import datetime
 import os
 
-def attributes(self, name=None):
+def attributes(path, name=None):
     attributes =['primitive_weighting_in_continuity_equation',
                  'surface_submergence_state','quadratic_friction_coefficient_at_sea_floor',
                  'surface_directional_effective_roughness_length',
@@ -14,7 +14,7 @@ def attributes(self, name=None):
                  'average_horizontal_eddy_viscosity_in_sea_water_wrt_depth','elemental_slope_limiter',
                  'advection_state','initial_river_elevation']
     attribute = []
-    with open(self.fp, 'r') as f:
+    with open(path, 'r') as f:
         lines = f.readlines()
         for line in lines:
             for i in range(0,len(attributes)):
@@ -26,17 +26,17 @@ def attributes(self, name=None):
         t_attrib = t_attrib[t_attrib['Parameter'].str.contains(name)]
     return t_attrib
 
-def read_fort13(self, attribute):
+def read_fort13(path, attribute):
     x = 0
     table_v2 = pd.DataFrame()
-    with open(self.fp, 'r') as f:
+    with open(path, 'r') as f:
         lines = f.readlines()
         for i, line in enumerate(lines):
             if attribute['Parameter'].iloc[-1] in line:
                 start_read_line = i+4
                 break
     for x in range(len(attribute['Parameter'])):
-        with open(self.fp, 'r') as f:
+        with open(path, 'r') as f:
             idx=0
             get_count = False
             lines = f.readlines()
@@ -74,9 +74,9 @@ def read_fort13(self, attribute):
             table_v2 = pd.concat([table_v2,table_v3],axis=1,sort=False)
     return table_v2 
 
-def read_fort14(self):
+def read_fort14(path):
     nodesx, nodesy, value, node_id, node_name, loc = [], [], [], [], [], []
-    with open(self.fp, 'r') as f:
+    with open(path, 'r') as f:
         lines = f.readlines()
         for i in range(0,len(lines)):
             line = lines[i]
@@ -109,8 +109,7 @@ def seperate_13(table):
                 table = table.drop(xx[i],1)
     return table
 
-
-def read_fort15(self):
+def read_fort15(path):
     content,descr,var = [], [],[]
     with open(self.fp, 'r') as fin:
         lines = fin.readlines()
@@ -187,13 +186,5 @@ def add_attribute2nc4(netcdf_path, table, attr, lon='lon',lat='lat',surf='0'):
                         f.close()
                         break
     return
-
-
-
-
-
-
-
-
 
 

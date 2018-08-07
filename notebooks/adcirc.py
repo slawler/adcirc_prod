@@ -32,7 +32,7 @@ from matplotlib.patches import FancyArrowPatch
 from matplotlib.animation import FuncAnimation
 from PIL import *
 import glob
-
+import os
 
 class adcirc:
     
