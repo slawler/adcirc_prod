@@ -6,12 +6,15 @@
         attributes
         read_fort13
         read_fort14
+        read_fort15
         seperate_13
         initnc4
         add_attribute2nc4
         attr_plot
         plot_surf_dir
 '''
+import warnings
+warnings.filterwarnings("ignore")
 import pandas as pd
 import numpy as np
 from importlib import reload
@@ -20,9 +23,9 @@ from adcirc_input_lib import *
 import noaa_lib ; reload(noaa_lib)
 from noaa_lib import *
 import netCDF4 as nc4
+import matplotlib as mpl
 from datetime import datetime
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import matplotlib.tri as tri
 from mpl_toolkits.basemap import Basemap
 from matplotlib.patches import FancyArrowPatch
@@ -37,24 +40,7 @@ class adcirc:
         self.path = path
         self.file = file
         self.fp   = os.path.join(self.path,self.file)
-        
-    
-    def plot_hurricane(begin1, end1, stations, title1):
-        begin = 'begin_date='+ begin1
-        end   = 'end_date='+ end1
-        hatt   = pd.read_csv(tide_data(begin, end, stations[0]['Hatteras']))
-        duke   = pd.read_csv(tide_data(begin, end, stations[1]['Beaufort']))
-        wright = pd.read_csv(tide_data(begin, end, stations[2]['Wrightsville']))
-        hatt.name, duke.name, wright.name ='Hatteras','Beaufort', 'Wrightsville'
-        datasets = [duke, wright, hatt]
-        obs, dtm  = ' Water Level', 'Date Time'
-        beg = begin.split('=')[1] + ' - ' + end.split('=')[1]
-        title = title1 + ' ' + beg
-        data, layout = noaa_plot(datasets, obs, dtm, title)
-        
-        return data, layout
-    
-    
+            
     
     def attributes(self, name='none'):
         attributes =['primitive_weighting_in_continuity_equation',
@@ -165,7 +151,23 @@ class adcirc:
                     table = table.drop(xx[i],1)
         return table
     
-       
+    def read_fort15(self):
+        content,descr,var = [], [],[]
+        with open(self.fp, 'r') as fin:
+            lines = fin.readlines()
+            for line in lines:
+                if '!' in line:
+                    data = line.split('!')
+                    var.append(data[0].strip())
+                    param= data[1].split('-')[0].replace('\n','')
+                    descr.append(param)
+        content = np.reshape(var,(1,len(var)))
+        table = pd.DataFrame(content,columns=descr) 
+        
+        return table
+    
+    
+    
     def initnc4(netcdf_path, fort14, lon='lon',lat='lat'):
         f = nc4.Dataset(os.path.join(netcdf_path,'input_fort.nc'),'w',format='NETCDF4')
         temp = f.createGroup('fort14')
@@ -188,7 +190,6 @@ class adcirc:
         f.history     = 'Created ' + today.strftime('%d/%m/%y')
         f.close()
         return
-
     
     def add_attribute2nc4(netcdf_path, table, attr, lon='lon',lat='lat',surf='0'):
         head = list(table)
@@ -240,12 +241,12 @@ class adcirc:
         m.drawcoastlines(color='k')
         m.arcgisimage(service='World_Street_Map', xpixels=int(pixels), verbose= False)
         plt.title(title+'\n')
-        cmap = matplotlib.cm.get_cmap('viridis')  
-        normalize = matplotlib.colors.Normalize(vmin=min(data), vmax=max(data))
+        cmap = mpl.cm.get_cmap('viridis')  
+        normalize = mpl.colors.Normalize(vmin=min(data), vmax=max(data))
         colors = [cmap(normalize(value)) for value in data]
         ax.scatter(x,y,marker = '.', color=colors, zorder=.25)
-        cax, _ = matplotlib.colorbar.make_axes(ax)
-        cbar = matplotlib.colorbar.ColorbarBase(cax, cmap=cmap, norm=normalize)
+        cax, _ = mpl.colorbar.make_axes(ax)
+        cbar = mpl.colorbar.ColorbarBase(cax, cmap=cmap, norm=normalize)
         
         return plt.show()
     
