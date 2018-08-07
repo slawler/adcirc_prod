@@ -4,6 +4,13 @@ import netCDF4 as nc4
 from datetime import datetime
 import os
 
+def find_columns(data):
+    data2 = []
+    for f in data.split(' '):
+        if f != '':
+            data2.append(f)   
+    return data2
+
 def attributes(path, name=None):
     attributes =['primitive_weighting_in_continuity_equation',
                  'surface_submergence_state','quadratic_friction_coefficient_at_sea_floor',
