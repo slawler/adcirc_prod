@@ -457,7 +457,7 @@ class adcirc:
                 triang.set_mask(tri_mask)
             plt.xlim([lon1, lon2])
             plt.ylim([lat1, lat2])    
-            plt.tricontourf(triang, data1, levels=levels,alpha=0.75,vmin=-3, vmax=5.25, aspect='auto',cmap='jet')
+            plt.tricontourf(triang, data1, levels=levels,alpha=0.75,vmin=-1, vmax=6, aspect='auto',cmap='jet')
             wl.append('WL{}.png'.format(file_number))
             plt.colorbar(cmap='jet',fraction=0.026,pad=0.04) 
             plt.title(title + '\n')
