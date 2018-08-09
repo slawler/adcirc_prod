@@ -33,6 +33,7 @@ from matplotlib.animation import FuncAnimation
 from PIL import *
 import glob
 import os
+import scipy.interpolate
 
 class adcirc:
     
@@ -481,11 +482,14 @@ class adcirc:
             os.remove(f)    
         return
         
-    def global_velocity(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2,start=None):
+    def global_velocity(global_path,netcdf_file,title,hours,levels,lon1,lon2,lat1,lat2,start=None,grid_space=None):
         start_date = datetime.strptime(start,'%Y%m%d%H')
         wl=[]
         xx = netcdf_file.variables['x'][:]
         yy = netcdf_file.variables['y'][:]
+        xg = np.linspace(lon1,lon2,grid_space)
+        yg = np.linspace(lat1,lat2,grid_space)
+        xgrid,ygrid = np.meshgrid(xg,yg)
         gridvars = netcdf_file.variables      
         var_element = 'element'
         elems = gridvars[var_element][:,:]-1
@@ -493,12 +497,17 @@ class adcirc:
                     urcrnrlon=lon2,resolution='h', epsg = 4269)
         for i in range(0,hours):
             i=i+1
+            x,y,u2,v2 = [],[],[],[]
             u = netcdf_file.variables['u-vel'][i,:]
             v = netcdf_file.variables['v-vel'][i,:]
+            ugrid = scipy.interpolate.griddata((xx,yy),u,(xgrid,ygrid),method='nearest')
+            vgrid = scipy.interpolate.griddata((xx,yy),v,(xgrid,ygrid),method='nearest')
+            u_norm = ugrid / np.sqrt(ugrid ** 2.0 + vgrid ** 2.0)
+            v_norm = vgrid / np.sqrt(ugrid ** 2.0 + vgrid ** 2.0)
             file_number = '%05d'%i
             m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 200, verbose= False)
             m.drawcoastlines(color='k')
-            plt.quiver(xx,yy,u,v)
+            plt.quiver(xgrid,ygrid,u_norm,v_norm, pivot='mid', scale = 45, color='w')
             plt.xlim([lon1, lon2])
             plt.ylim([lat1, lat2])    
             wl.append('WL{}.png'.format(file_number))
@@ -603,7 +612,8 @@ class adcirc:
             os.remove(f)
         return
     
-    def water_velocity(global_path,nc4_f1,nc4_f2,title,hours,levels,lon1,lon2,lat1,lat2):
+    def water_velocity(global_path,nc4_f1,nc4_f2,title,hour2,levels,lon1,lon2,lat1,lat2,start=None,interval=None):
+        start_date = datetime.strptime(start,'%Y%m%d%H')
         wl=[]
         xx = nc4_f1.variables['x'][:]
         yy = nc4_f1.variables['y'][:]
@@ -611,11 +621,18 @@ class adcirc:
         var_element = 'element'
         elems = gridvars[var_element][:,:]-1
         m = Basemap(projection='cyl',llcrnrlat=lat1,urcrnrlat=lat2,llcrnrlon=lon1,urcrnrlon=lon2,resolution='h', epsg = 4269)
-        for i in range(0,hours):
+        for i in range(0,hour2):
             i=i+1
             data1 = nc4_f1.variables['zeta'][i,:]
             u = nc4_f2.variables['u-vel'][i,:]
             v = nc4_f2.variables['v-vel'][i,:]
+            x,y,u2,v2 = [],[],[],[]
+            for i3 in range(0,len(xx),interval):
+                if xx[i3]>lon1 and xx[i3]<lon2 and yy[i3]>lat1 and yy[i3]<lat2:
+                    x.append(xx[i3])
+                    y.append(yy[i3])
+                    u2.append(u[i3])
+                    v2.append(v[i3])
             file_number = '%05d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
             m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 100, verbose= False)
@@ -625,12 +642,13 @@ class adcirc:
                 tri_mask = np.any(np.in1d(elems, point_mask_indices).reshape(-1, 3), axis=1)
                 triang.set_mask(tri_mask)
             plt.xlim([lon1, lon2])
-            plt.ylim([lat1, lat2])    
-            plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=-1.1, vmax=6, aspect='auto',cmap='jet')
-            plt.quiver(xx,yy,u,v)
+            plt.ylim([lat1, lat2])
+            plt.quiver(x,y,u2,v2)
+            plt.tricontourf(triang, data1, levels=levels,alpha=0.9,vmin=-1.1, vmax=6, aspect='auto',cmap='jet')            
             wl.append('WL{}.png'.format(file_number))
-            #plt.colorbar(cmap='jet',format = "%.1f") 
+            plt.colorbar(cmap='jet',fraction=0.026,pad=0.04) 
             plt.title(title + '\n')
+            plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
             plt.savefig('WL{}.png'.format(file_number),dpi=300, bbox_inches = 'tight', pad_inches = 0.1)
             plt.close()
         images = []
