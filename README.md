@@ -20,3 +20,6 @@ This repository was created to document the development of tools used for the an
 
 - Example
 <img  style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/extra/figures/surface_canopy.PNG" width=1000px>
+
+
+<img  style="float:right;" src="https://github.com/tmiesse/adcirc_prod/blob/master/notebooks/WaterLevel.gif" width=1000px>
