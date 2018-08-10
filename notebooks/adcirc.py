@@ -472,7 +472,7 @@ class adcirc:
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
             images.append(frames)
-        images[0].save(title.split(' ')[0]+title.split(' ')[1]+'.gif',
+        images[0].save('WaterLevel.gif',
            save_all=True,
            append_images=images[1:],
            delay=.1,
@@ -520,7 +520,7 @@ class adcirc:
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
             images.append(frames)
-        images[0].save(title.split(' ')[0]+title.split(' ')[1]+'.gif',
+        images[0].save('DepthVelocity.gif',
            save_all=True,
            append_images=images[1:],
            delay=.1,
@@ -566,7 +566,7 @@ class adcirc:
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
             images.append(frames)
-        images[0].save(title.split(' ')[0]+title.split(' ')[1]+'.gif',
+        images[0].save('AtmosphericPressure.gif',
            save_all=True,
            append_images=images[1:],
            delay=.1,
@@ -611,7 +611,7 @@ class adcirc:
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
             images.append(frames)
-        images[0].save(title.split(' ')[0]+title.split(' ')[1]+'.gif',
+        images[0].save('WindVelocity.gif',
            save_all=True,
            append_images=images[1:],
            delay=.1,
@@ -669,7 +669,7 @@ class adcirc:
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
             images.append(frames)
-        images[0].save(title.split(' ')[0]+title.split(' ')[1]+'.gif',
+        images[0].save('PressureWind.gif',
            save_all=True,
            append_images=images[1:],
            delay=.1,
@@ -722,7 +722,7 @@ class adcirc:
         for ii in range(0,len(wl)):
             frames = Image.open(wl[ii])
             images.append(frames)
-        images[0].save(title.split(' ')[0]+title.split(' ')[1]+'.gif',
+        images[0].save('WaterVelocity.gif',
            save_all=True,
            append_images=images[1:],
            delay=.1,
