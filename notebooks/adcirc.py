@@ -643,11 +643,11 @@ class adcirc:
             v = netcdf_file2.variables['windy'][i,:]
             ugrid = scipy.interpolate.griddata((xx2,yy2),u,(xgrid,ygrid),method='nearest')
             vgrid = scipy.interpolate.griddata((xx2,yy2),v,(xgrid,ygrid),method='nearest')
-            u_norm = ugrid / np.sqrt(ugrid ** 2.0 + vgrid ** 2.0)
-            v_norm = vgrid / np.sqrt(ugrid ** 2.0 + vgrid ** 2.0)
+            #u_norm = ugrid / np.sqrt(ugrid ** 2.0 + vgrid ** 2.0)
+            #v_norm = vgrid / np.sqrt(ugrid ** 2.0 + vgrid ** 2.0)
             file_number = '%05d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 400, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels = 100, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
@@ -659,7 +659,7 @@ class adcirc:
                             vmax=10.6, aspect='auto',cmap='jet')
             wl.append('WL{}.png'.format(file_number))
             plt.colorbar(cmap='jet',fraction=0.026,pad=0.04)
-            plt.quiver(xgrid,ygrid,u_norm,v_norm, pivot='mid', scale = 45, color='w')
+            plt.quiver(xgrid,ygrid,ugrid,vgrid, pivot='mid', scale = 500, color='w')
             plt.title(title + '\n')
             plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
             plt.savefig('WL{}.png'.format(file_number),dpi=300,
