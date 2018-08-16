@@ -12,14 +12,13 @@ import random
 
 def tide_data(begin_d, end_d, station):
     website = r'https://tidesandcurrents.noaa.gov/api/'
-    datum = 'datum=NAVD'
+    datum = 'datum=MSL'
     units = 'units=metric'
-    timez = 'time_zone=LST'
+    timez = 'time_zone=GMT'
     form = 'format=csv'
-    app = 'datagetter?product=hourly_height&application=NOS.COOPS.TAC.WL'
+    app = 'datagetter?product=water_level&application=NOS.COOPS.TAC.WL'
     domain = website + app + '&' + station + '&' + begin_d + '&' + end_d + '&' + datum + '&' + units + '&' + timez + '&' + form
     return domain
-
 
 def tide_gauges():
     Hatteras = {'Hatteras':'station=8654467'}

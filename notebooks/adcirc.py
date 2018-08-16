@@ -451,7 +451,7 @@ class adcirc:
             data1 = netcdf_file.variables['zeta'][i,:]
             file_number = '%05d'%i
             triang = tri.Triangulation(xx,yy, triangles=elems)
-            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels=400, verbose= False)
+            m.arcgisimage(service='ESRI_Imagery_World_2D', xpixels=100, verbose= False)
             m.drawcoastlines(color='k')
             if data1.mask.any():
                 point_mask_indices = np.where(data1.mask)
@@ -465,7 +465,7 @@ class adcirc:
             plt.colorbar(cmap='jet',fraction=0.026,pad=0.04) 
             plt.title(title + '\n')
             plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
-            plt.savefig('WL{}.png'.format(file_number),dpi=300,
+            plt.savefig('WL{}.png'.format(file_number),dpi=200,
                         bbox_inches = 'tight', pad_inches = 0.1)
             plt.close()
         images = []
@@ -829,7 +829,58 @@ class adcirc:
         return plt.show()      
     
     
-    
+    def plot_tide_gauges(nc_file,begin,last,title,out_freq, names=None):
+        stations = tide_gauges()
+        model_data = nc_file['zeta'][:,23]
+        model_data2= nc_file['zeta'][:,21]
+        start = 'begin_date='+begin
+        end   = 'end_date='+last
+        obs_station1 = pd.read_csv(tide_data(start,end,stations[1]['Beaufort']))
+        obs_station2 = pd.read_csv(tide_data(start,end,stations[2]['Wrightsville']))
+        obs_station3 = pd.read_csv(tide_data(start,end,stations[0]['Hatteras']))
+        obs_station1.name,obs_station2.name,obs_station3.name = 'Obs. Beaufort','Obs. Wrightsville','Obs. Hatteras'
+        model1 = pd.DataFrame(model_data)
+        date   = pd.date_range(start=begin,periods=int(len(model1)),freq=out_freq)
+        model1.insert(0,'Date Time',date)
+        model1 = model1.rename(columns={0:' Water Level'})
+        model2 = pd.DataFrame(model_data2)
+        model2.insert(0,'Date Time',date)
+        model2 = model2.rename(columns={0:' Water Level'})
+        datasets = [obs_station1,obs_station2,obs_station3,model1,model2]
+        data = list()
+        i=0
+        for dataset in datasets:
+            date = dataset.loc[:,'Date Time']
+            water_level = dataset.loc[:,' Water Level']
+            c_list = ['rgb(51, 204, 51)','rgb(0, 255, 204)',
+                          'rgb(0, 204, 255)','rgb(102, 255, 255)',
+                          'rgb(0, 102, 153)','rgb(0, 0, 255)',
+                          'rgb(51, 51, 255)','rgb(102, 0, 255)',
+                          'rgb(153, 153, 255)','rgb(204, 0, 255)',
+                          'rgb(255, 51, 204)','rgb(204, 0, 0)',
+                          'rgb(255, 153, 0)','rgb(204, 255, 51)',
+                          'rgb(0, 153, 0)']
+            for x in range(1):
+                    y=random.randint(1,14)
+                    color = c_list[y]
+            trace = go.Scatter(
+                    x = date,
+                    y = water_level,
+                    name = names[i],
+                        line = dict(
+                        color = color))
+            i+=1
+            data.append(trace)
+        layout = go.Layout(dict(title = title),
+                  xaxis = dict(title = 'Time'),
+                  yaxis = dict(title = 'Water level (m) at MSL'),                     
+                  legend= dict(orientation = "h"),
+                  font = dict(color = 'rgb(255,255,255)'),
+                  paper_bgcolor = 'rgb(0,0,0)',
+                  plot_bgcolor = 'rgb(0,0,0)')
+
+            
+        return data,layout
     
     
     
