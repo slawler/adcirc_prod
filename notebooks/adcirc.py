@@ -829,7 +829,7 @@ class adcirc:
         return plt.show()      
     
     
-    def plot_tide_gauges(nc_file,begin,last,title,out_freq, names=None):
+    def plot_tide_gauges(path,nc_file,begin,last,title,out_freq, names=None):
         stations = tide_gauges()
         model_data = nc_file['zeta'][:,23]
         model_data2= nc_file['zeta'][:,21]
@@ -849,6 +849,11 @@ class adcirc:
         datasets = [obs_station1,obs_station2,obs_station3,model1,model2]
         data = list()
         i=0
+        obs_station1.to_csv(os.path.join(path,names[0]+'.csv'))
+        obs_station2.to_csv(os.path.join(path,names[1]+'.csv'))
+        obs_station3.to_csv(os.path.join(path,names[2]+'.csv'))
+        model1.to_csv(os.path.join(path,names[3]+'.csv'))
+        model2.to_csv(os.path.join(path,names[4]+'.csv'))
         for dataset in datasets:
             date = dataset.loc[:,'Date Time']
             water_level = dataset.loc[:,' Water Level']
