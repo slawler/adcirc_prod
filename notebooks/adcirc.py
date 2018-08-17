@@ -657,7 +657,7 @@ class adcirc:
                             vmax=10.6, aspect='auto',cmap='jet')
             wl.append('WL{}.png'.format(file_number))
             cb=plt.colorbar(cmap='jet',fraction=0.026,pad=0.04)
-            cb.set_label('Pressure (kPa)',fonts)
+            cb.set_label('Pressure (kPa)',fontsize=10)
             plt.title(title + '\n')
             plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
             plt.savefig('WL{}.png'.format(file_number),dpi=300,
@@ -758,7 +758,7 @@ class adcirc:
                             vmax=10.6, aspect='auto',cmap='jet')
             wl.append('WL{}.png'.format(file_number))
             cb = plt.colorbar(cmap='jet',fraction=0.026,pad=0.04)
-            cb.set_label('Pressure (kPa)',fontsize=16)
+            cb.set_label('Pressure (kPa)',fontsize=10)
             plt.quiver(xgrid,ygrid,ugrid,vgrid, pivot='mid', scale = 600, color='w')
             plt.title(title + '\n')
             plt.xlabel('\nDate:{}'.format(start_date+ timedelta(hours=i)))
